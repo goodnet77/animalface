@@ -11,7 +11,7 @@
     width: 100%;
     margin: 0;
     color: #fff;
-    background: #1FB264;
+    background: #81DAF5;
     border: none;
     padding: 10px;
     border-radius: 4px;
@@ -23,7 +23,7 @@
   }
   
   .file-upload-btn:hover {
-    background: #1AA059;
+    background: #58D3F7;
     color: #ffffff;
     transition: all .2s ease;
     cursor: pointer;
@@ -52,13 +52,13 @@
   
   .image-upload-wrap {
     margin-top: 20px;
-    border: 4px dashed #1FB264;
+    border: 4px dashed #81BEF7;
     position: relative;
   }
   
   .image-dropping,
   .image-upload-wrap:hover {
-    background-color: #1FB264;
+    background-color: #81BEF7;
     border: 4px dashed #ffffff;
   }
   
