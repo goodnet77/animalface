@@ -1,0 +1,4 @@
+User-Agent:*
+Allow: /
+
+Sitemap: https://facematch.netlify.app/sitemap.xml
