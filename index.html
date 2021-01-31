@@ -47,12 +47,12 @@
         </nav>
 
         <center>
-            <h2>인공지능 인물상 테스트(남자)</h2>
+            <h2>인공지능 인물상 테스트</h2>
             <h3>난 어떤 동물을 닮았을까?</h3>
             <p></p>
             <div>
-               <label>남자 <input type="radio" name = "gender" value="man" checked="checked" /></label>&nbsp;&nbsp;&nbsp;&nbsp;
-               <label>여자 <input type="radio" name = "gender" value="woman" /></label>
+               <label>여자 <input type="radio" name = "gender" value="woman" checked="checked" /></label>&nbsp;&nbsp;&nbsp;&nbsp;
+               <label>남자 <input type="radio" name = "gender" value="man" /></label>
             </div> 
         </center>
 
@@ -75,14 +75,14 @@
                 <img class="file-upload-image" id="face-image" src="#" alt="your image" />
                 <b><p class = "result-message"></p></b>
                 <p class = "result-message2"></p>
-                <div id="label-container"></div><p></p>
+                <div id="label-container"></div>
 
             <!-- <div class="image-title-wrap">
                     <button type="button" onclick="removeUpload()" class="remove-image">사진 삭제<span class="image-title">Uploaded Image</span>
                     </button>
                 </div> -->                
             </div>
-            
+
             <p></p>
             <!-- Go to www.addthis.com/dashboard to customize your tools -->
             <center><div class="addthis_inline_share_toolbox"></div></center>
@@ -160,8 +160,10 @@
 
                     reader.readAsDataURL(input.files[0]);
                     init().then(function () {
-                        console.log('Hello!');
-                        predict();
+                        console.log('Hello!');    
+                        var gender_check = document.getElementsByName("gender");                
+                        if (gender_check[0].checked) { predict_woman(); }
+                        else { predict_man(); } 
                     });
                 } else {
                     removeUpload();
@@ -188,16 +190,18 @@
             // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
             // the link to your model provided by Teachable Machine export panel
 
+            const URL_woman = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
             const URL_man = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
-            const URL_woman = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
 
             let model, webcam, labelContainer, maxPredictions;
 
             function urlselect() {
                 var gender_check = document.getElementsByName("gender");
-                if (gender_check[0].checked) { return URL_man; }
-                else { return URL_woman; }       
+                if (gender_check[0].checked) { return URL_woman; }
+                else { return URL_man; }       
             }
+
+
 
             // Load the image model and setup the webcam
             
@@ -219,7 +223,61 @@
                 }
             }
 
-            async function predict() {
+            async function predict_woman() {
+                // predict can take in an image, video or canvas html element
+                var image = document.getElementById('face-image');
+                const prediction = await model.predict(image, false);
+                prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+                console.log(prediction[0].className);
+                var resultMessage;
+                var resultMessage2;
+                switch (prediction[0].className) {
+                    case "강아지상":
+                        resultMessage = "강아지상"
+                        resultMessage2 = "친근한 얼굴에 최고의 애교를 가진 강아지를 닮으셨네요. ^^"
+                        break;
+                    case "고양이상":
+                        resultMessage = "고양이상"
+                        resultMessage2 = "와우~ 귀엽고 완전 섹시한 느낌의 고양이상입니다. ㅎㅎ"
+                        break;
+                    case "토끼상":
+                        resultMessage = "토끼상"
+                        resultMessage2 = "완전 귀엽게 생기신 듯~ 이제 깡총깡총 뛰기만 하면 될 것 같아요. ㅋㅋ"
+                        break;
+                    case "사슴상":
+                        resultMessage = "사슴상"
+                        resultMessage2 = "아~ 가련하고 아름다운 사슴상 여인이여~ ㅎㅎ"
+                        break;
+                    case "여우상":
+                        resultMessage = "여우상"
+                        resultMessage2 = "오늘도 많은 남자들을 홀리시겠네요. ㅋㅋㅋ"
+                        break;    
+                    case "강아지":
+                        resultMessage = "강아지"
+                        resultMessage2 = "진짜 강아지인데요. ㅎㅎ"
+                        break;    
+                    case "고양이":
+                        resultMessage = "고양이"
+                        resultMessage2 = "진짜 고양이에요. ㅎㅎ"
+                        break;        
+                    case "주변사물":
+                        resultMessage = "주변사물"
+                        resultMessage2 = "사람이나 동물이나 아닌 듯. ㅎㅎ"
+                        break;                  
+                    default:
+                        resultMessage = "알수없음"
+                }
+                $('.result-message').html(resultMessage);
+                $('.result-message2').html(resultMessage2);
+
+                for (let i = 0; i < maxPredictions; i++) {
+                    const classPrediction =
+                        prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+                    labelContainer.childNodes[i].innerHTML = classPrediction;
+                }
+            }
+
+            async function predict_man() {
                 // predict can take in an image, video or canvas html element
                 var image = document.getElementById('face-image');
                 const prediction = await model.predict(image, false);
@@ -260,6 +318,7 @@
                     labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
             }
+
         </script>
     </body>
 
