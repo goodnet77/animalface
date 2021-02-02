@@ -33,7 +33,7 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link"href="https://teachablemachine.withgoogle.com/models/NVVWqC15N/">닮은 동물</a>
+                            <a class="nav-link"href="https://teachablemachine.withgoogle.com/models/NVVWqC15N/">닮은 동물(캠 ver.)</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">어울리는 연애인</a>
@@ -51,8 +51,9 @@
             <h3>난 어떤 동물을 닮았을까?</h3>
             <p></p>
             <div>
-               <label>여자 <input type="radio" name = "gender" value="woman" checked="checked" /></label>&nbsp;&nbsp;&nbsp;&nbsp;
-               <label>남자 <input type="radio" name = "gender" value="man" /></label>
+                <label>여자 <input type="radio" name = "gender" value="woman" checked="checked" /></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label>남자 <input type="radio" name = "gender" value="man" /></label></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <label>두사람 <input type="radio" name = "gender" value="couple" /></label>
             </div> 
         </center>
 
@@ -72,6 +73,8 @@
         
             <!-- 사진 올리기 후 -->
             <div class="file-upload-content">
+                <p></p>
+                <b><div class = "gender-message"></div></b>
                 <img class="file-upload-image" id="face-image" src="#" alt="your image" />
                 <b><p class = "result-message"></p></b>
                 <p class = "result-message2"></p>
@@ -159,10 +162,15 @@
                     };
 
                     reader.readAsDataURL(input.files[0]);
-                    init().then(function () {
-                        console.log('Hello!');    
+
+                    init1().then(function () {
+                        predict_gender();
+                    });
+
+                    init2().then(function () {
                         var gender_check = document.getElementsByName("gender");                
                         if (gender_check[0].checked) { predict_woman(); }
+                        else if (gender_check[1].checked) { predict_man(); }
                         else { predict_man(); } 
                     });
                 } else {
@@ -185,27 +193,46 @@
 
         </script>
 
-        <script type="text/javascript">
+        <script>
             // More API functions here:
             // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
             // the link to your model provided by Teachable Machine export panel
 
+            const URL_gender = 'https://teachablemachine.withgoogle.com/models/UwM5p1mHd/';
             const URL_woman = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
             const URL_man = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
+            const URL_couple = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
 
             let model, webcam, labelContainer, maxPredictions;
 
             function urlselect() {
                 var gender_check = document.getElementsByName("gender");
                 if (gender_check[0].checked) { return URL_woman; }
-                else { return URL_man; }       
+                else if (gender_check[1].checked) { return URL_man; }
+                else { return URL_couple }       
             }
-
-
 
             // Load the image model and setup the webcam
             
-            async function init() {
+            async function init1() {
+                const modelURL = URL_gender + 'model.json';
+                const metadataURL = URL_gender + 'metadata.json';
+
+                // load the model and metadata
+                // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+                // or files from your local hard drive
+                // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+
+                labelContainer = document.getElementById('label-container');
+                for (let i = 0; i < maxPredictions; i++) {
+                    // and class labels
+                    labelContainer.appendChild(document.createElement('div'));
+                }
+            }
+
+            async function init2() {
                 const modelURL = urlselect() + 'model.json';
                 const metadataURL = urlselect() + 'metadata.json';
 
@@ -220,6 +247,42 @@
                 for (let i = 0; i < maxPredictions; i++) {
                     // and class labels
                     labelContainer.appendChild(document.createElement('div'));
+                }
+            }
+
+            async function predict_gender() {
+                // predict can take in an image, video or canvas html element
+                var image = document.getElementById('face-image');
+                const prediction = await model.predict(image, false);
+                prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+                console.log(prediction[0].className);
+                var genderMessage;
+                var gender_check = document.getElementsByName("gender");                
+                switch (prediction[0].className) {
+                    case "여자":
+                        gender_check[0].checked = true;
+                        genderMessage = "여성분으로 인식 했습니다. 여자 AI 모델을 적용합니다."
+                        break;
+                    case "남자":
+                        gender_check[1].checked = true;
+                        genderMessage = "남성분으로 인식 했습니다. 남자 AI 모델을 적용합니다."
+                        break;
+                    case "두사람":
+                        gender_check[2].checked = true;
+                        genderMessage = "두사람이군요. 커플 AI 모델을 적용합니다."
+                        break;    
+                    case "주변사물":
+                        genderMessage = "사람이나 동물이 아닌 듯... ㅎㅎ"
+                        break;                  
+                    default:
+                        resultMessage = "알수없음"
+                }
+                $('.gender-message').html(genderMessage);
+
+                for (let i = 0; i < maxPredictions; i++) {
+                    const classPrediction =
+                        prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+                    labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
             }
 
@@ -270,7 +333,7 @@
                 $('.result-message').html(resultMessage);
                 $('.result-message2').html(resultMessage2);
 
-                for (let i = 0; i < maxPredictions; i++) {
+                for (let i = 0; i < 5; i++) {
                     const classPrediction =
                         prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
                     labelContainer.childNodes[i].innerHTML = classPrediction;
@@ -312,7 +375,7 @@
                 $('.result-message').html(resultMessage);
                 $('.result-message2').html(resultMessage2);
 
-                for (let i = 0; i < maxPredictions; i++) {
+                for (let i = 0; i < 5; i++) {
                     const classPrediction =
                         prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
                     labelContainer.childNodes[i].innerHTML = classPrediction;
