@@ -164,18 +164,16 @@
                     reader.readAsDataURL(input.files[0]);
 
                     init1().then(function () {
-                        predict_gender();
+                        predict_gender().then(function () {
+                            init2().then(function () {
+                                if (gender_result == "woman") { predict_woman(); }
+                                else if (gender_result == "man") { predict_man(); }
+                                else { predict_man(); } 
+                            });
+                        });
                     });
 
-                    init2().then(function () {
-                        var gender_check = document.getElementsByName("gender");                
-                        if (gender_check[0].checked) { predict_woman(); }
-                        else if (gender_check[1].checked) { predict_man(); }
-                        else { predict_man(); } 
-                    });
-                } else {
-                    removeUpload();
-                }
+                } else { removeUpload(); }
             }
 
             function removeUpload() {
@@ -191,9 +189,6 @@
                 $('.image-upload-wrap').removeClass('image-dropping');
             });
 
-        </script>
-
-        <script>
             // More API functions here:
             // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
             // the link to your model provided by Teachable Machine export panel
@@ -203,13 +198,12 @@
             const URL_man = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
             const URL_couple = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
 
-            let model, webcam, labelContainer, maxPredictions;
+            let model, webcam, labelContainer, maxPredictions, gender_result;
 
             function urlselect() {
-                var gender_check = document.getElementsByName("gender");
-                if (gender_check[0].checked) { return URL_woman; }
-                else if (gender_check[1].checked) { return URL_man; }
-                else { return URL_couple }       
+                if (gender_result == "woman") { return URL_woman; }
+                else if (gender_result == "man") { return URL_man; }
+                else { return URL_couple; }    
             }
 
             // Load the image model and setup the webcam
@@ -257,22 +251,26 @@
                 prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
                 console.log(prediction[0].className);
                 var genderMessage;
-                var gender_check = document.getElementsByName("gender");                
+                var gender_check = document.getElementsByName("gender");
                 switch (prediction[0].className) {
                     case "여자":
                         gender_check[0].checked = true;
                         genderMessage = "여성분으로 인식 했습니다. 여자 AI 모델을 적용합니다."
+                        gender_result = "woman";
                         break;
                     case "남자":
                         gender_check[1].checked = true;
                         genderMessage = "남성분으로 인식 했습니다. 남자 AI 모델을 적용합니다."
+                        gender_result = "man";
                         break;
                     case "두사람":
                         gender_check[2].checked = true;
                         genderMessage = "두사람이군요. 커플 AI 모델을 적용합니다."
+                        gender_result = "couple";
                         break;    
                     case "주변사물":
                         genderMessage = "사람이나 동물이 아닌 듯... ㅎㅎ"
+                        gender_result = "things";
                         break;                  
                     default:
                         resultMessage = "알수없음"
@@ -284,6 +282,7 @@
                         prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
                     labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
+                return gender_result;
             }
 
             async function predict_woman() {
