@@ -169,7 +169,8 @@
                             init2().then(function () {
                                 if (gender_result == "woman") { predict_woman(); }
                                 else if (gender_result == "man") { predict_man(); }
-                                else { predict_man(); } 
+                                else if (gender_result == "couple") { predict_couple(); }
+                                else { predict_things(); } 
                             });
                         });
                     });
@@ -197,14 +198,16 @@
             const URL_gender = 'https://teachablemachine.withgoogle.com/models/UwM5p1mHd/';
             const URL_woman = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
             const URL_man = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
-            const URL_couple = 'https://teachablemachine.withgoogle.com/models/sOqjkv0KP/';
+            const URL_couple = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
+            const URL_things = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
 
             let model, webcam, labelContainer, maxPredictions, gender_result;
 
             function urlselect() {
                 if (gender_result == "woman") { return URL_woman; }
                 else if (gender_result == "man") { return URL_man; }
-                else { return URL_couple; }    
+                else if (gender_result == "couple") { return URL_couple; }
+                else { return URL_things; }    
             }
 
             // Load the image model and setup the webcam
@@ -370,6 +373,86 @@
                         resultMessage = "곰상"
                         resultMessage2 = "혹시 실망 하셨나요? 다른 사진으로 다시 한번 도전을....ㅋㅋㅋ"
                         break;                    
+                    default:
+                        resultMessage = "알수없음"
+                }
+                $('.result-message').html(resultMessage);
+                $('.result-message2').html(resultMessage2);
+
+                for (let i = 0; i < 5; i++) {
+                    const classPrediction =
+                        prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+                    labelContainer.childNodes[i].innerHTML = classPrediction;
+                }
+            }
+
+            async function predict_couple() {
+                // predict can take in an image, video or canvas html element
+                var image = document.getElementById('face-image');
+                const prediction = await model.predict(image, false);
+                prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+                console.log(prediction[0].className);
+                var resultMessage;
+                var resultMessage2;
+                switch (prediction[0].className) {
+                    case "친밀도상":
+                        resultMessage = "매우 친밀"
+                        resultMessage2 = "두 사람 사이가 보통이 아니네요. ^^"
+                        break;
+                    case "친밀도중":
+                        resultMessage = "조금 친밀"
+                        resultMessage2 = "조금 더 가까이 다가가도 괜찮을 것 같네요."
+                        break;
+                    case "친밀도하":
+                        resultMessage = "별로 안친함"
+                        resultMessage2 = "두분 혹시 싸우셨어요? ㅋㅋ"
+                        break;                
+                    default:
+                        resultMessage = "알수없음"
+                }
+                $('.result-message').html(resultMessage);
+                $('.result-message2').html(resultMessage2);
+
+                for (let i = 0; i < 5; i++) {
+                    const classPrediction =
+                        prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+                    labelContainer.childNodes[i].innerHTML = classPrediction;
+                }
+            }
+
+            async function predict_things() {
+                // predict can take in an image, video or canvas html element
+                var image = document.getElementById('face-image');
+                const prediction = await model.predict(image, false);
+                prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+                console.log(prediction[0].className);
+                var resultMessage;
+                var resultMessage2;
+                switch (prediction[0].className) {
+                    case "여러사람":
+                        resultMessage = "여러 사람"
+                        resultMessage2 = "단체 사진 찍으시는 건가요? ^^"
+                        break;
+                    case "풍경":
+                        resultMessage = "풍경"
+                        resultMessage2 = "오 멋진 풍경인데요."
+                        break;
+                    case "자동차":
+                        resultMessage = "자동차"
+                        resultMessage2 = "혹시 자동차를 좋아 하시나요? ㅋㅋ"
+                        break;
+                    case "강아지":
+                        resultMessage = "강아지"
+                        resultMessage2 = "진짜 강아지인데요? ㅋㅋ"
+                        break; 
+                    case "고양이":
+                        resultMessage = "고양이"
+                        resultMessage2 = "진짜 고양이네요? ㅋㅋ"
+                        break;  
+                    case "식물":
+                        resultMessage = "식물"
+                        resultMessage2 = "이 식물 키우시는 건가요? ㅋㅋ"
+                        break;                             
                     default:
                         resultMessage = "알수없음"
                 }
