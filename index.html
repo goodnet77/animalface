@@ -75,7 +75,7 @@
             <!-- 사진 올리기 후 -->
             <div class="file-upload-content">
                 <p></p>
-                <b><div class = "gender-message"></div></b>
+                <div class = "gender-message"></div>
                 <img class="file-upload-image" id="face-image" src="#" alt="your image" />
                 <b><p class = "result-message"></p></b>
                 <p class = "result-message2"></p>
@@ -259,12 +259,12 @@
                 switch (prediction[0].className) {
                     case "여자":
                         gender_check[0].checked = true;
-                        genderMessage = "여성분으로 인식 했습니다. 여자 AI 모델을 적용합니다."
+                        genderMessage = "여성분으로 인식 했습니다.<br>여자 AI 모델을 적용합니다."
                         gender_result = "woman";
                         break;
                     case "남자":
                         gender_check[1].checked = true;
-                        genderMessage = "남성분으로 인식 했습니다. 남자 AI 모델을 적용합니다."
+                        genderMessage = "남성분으로 인식 했습니다.<br>남자 AI 모델을 적용합니다."
                         gender_result = "man";
                         break;
                     case "두사람":
@@ -309,7 +309,7 @@
                         break;
                     case "토끼상":
                         resultMessage = "토끼상"
-                        resultMessage2 = "완전 귀엽게 생기신 듯~ 이제 깡총깡총 뛰기만 하면 될 것 같아요. ㅋㅋ"
+                        resultMessage2 = "완전 귀엽게 생기신 듯~ <br> 이제 깡총깡총 뛰기만 하면 될 것 같아요. ㅋㅋ"
                         break;
                     case "사슴상":
                         resultMessage = "사슴상"
@@ -343,14 +343,13 @@
                     labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
 
-                var con_test = confirm("어울리는 연애인을 추천해 드릴까요?");
-                if(con_test == true){
-                document.write("어울리는 멋진 연애인 서비스는 준비 중입니다.");
-                }
-                else if(con_test == false){
-                document.write("OK");
-                }
-
+                setTimeout(function() {
+                    var con_test = confirm("어울리는 연애인을 추천해 드릴까요?");
+                    if(con_test == true){
+                    document.write("어울리는 멋진 연애인 서비스는 준비 중입니다.");
+                    }
+                    else if(con_test == false){ return; }
+                }, 5000);
             }
 
             async function predict_man() {
