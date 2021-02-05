@@ -342,6 +342,15 @@
                         prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
                     labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
+
+                var con_test = confirm("어울리는 연애인을 추천해 드릴까요?");
+                if(con_test == true){
+                document.write("어울리는 멋진 연애인 서비스는 준비 중입니다.");
+                }
+                else if(con_test == false){
+                document.write("OK");
+                }
+
             }
 
             async function predict_man() {
@@ -409,6 +418,7 @@
                         break;                
                     default:
                         resultMessage = "알수없음"
+                        resultMessage2 = "저도 무엇일까 궁금해요??"
                 }
                 $('.result-message').html(resultMessage);
                 $('.result-message2').html(resultMessage2);
@@ -455,6 +465,7 @@
                         break;                             
                     default:
                         resultMessage = "알수없음"
+                        resultMessage2 = "저도 무엇일까 궁금해요??"
                 }
                 $('.result-message').html(resultMessage);
                 $('.result-message2').html(resultMessage2);
@@ -465,7 +476,6 @@
                     labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
             }
-
         </script>
     </body>
 
