@@ -77,6 +77,7 @@
                 <p></p>
                 <div class = "gender-message"></div>
                 <img class="file-upload-image" id="face-image" src="#" alt="your image" />
+                <div id ="match-image"></div>
                 <b><p class = "result-message"></p></b>
                 <p class = "result-message2"></p>
                 <div id="label-container"></div>
@@ -347,7 +348,22 @@
                     var con_test = confirm("어울리는 연애인을 추천해 드릴까요?");
                     if(con_test == true){
                     document.write("어울리는 멋진 연애인 서비스는 준비 중입니다.");
+                    // labelContainer = document.getElementById('label-container');
+                    // labelContainer.appendChild(document.createElement('div'));
+                    // var reader = new FileReader();
+
+                    // reader.onload = function (e) {
+                    //     $('.image-upload-wrap').hide();
+
+                    //     $('.file-upload-image').attr('src', e.target.result);
+                    //     $('.file-upload-image').attr('src', "./강동원.jpg");
+                    //     $('.file-upload-content').show();
+
+                    //     $('.image-title').html(input.files[0].name);
+                    // };
+                    // reader.readAsDataURL(input.files[0]);
                     }
+                    
                     else if(con_test == false){ return; }
                 }, 5000);
             }
