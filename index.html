@@ -77,7 +77,7 @@
                 <p></p>
                 <div class = "gender-message"></div>
                 <img class="file-upload-image" id="face-image" src="#" alt="your image" />
-                <div class ="match-image"></div>
+                <div id ="match-image0"></div>
                 <b><p class = "result-message"></p></b>
                 <p class = "result-message2"></p>
                 <div id="label-container"></div>
@@ -202,7 +202,7 @@
             const URL_couple = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
             const URL_things = 'https://teachablemachine.withgoogle.com/models/NVVWqC15N/';
 
-            let model, webcam, labelContainer, maxPredictions, gender_result;
+            let model, webcam, labelContainer, maxPredictions, gender_result, matchimage;
 
             function urlselect() {
                 if (gender_result == "woman") { return URL_woman; }
@@ -310,15 +310,15 @@
                         break;
                     case "토끼상":
                         resultMessage = "토끼상"
-                        resultMessage2 = "완전 귀엽게 생기신 듯~ <br> 이제 깡총깡총 뛰기만 하면 될 것 같아요. ㅋㅋ"
+                        resultMessage2 = "완전 귀엽게 생기신 듯~<br> 이제 깡총깡총 뛰기만 하면 될 것 같아요. ㅋㅋ"
                         break;
                     case "사슴상":
                         resultMessage = "사슴상"
-                        resultMessage2 = "아~ 가련하고 아름다운 사슴상 여인이여~ ㅎㅎ"
+                        resultMessage2 = "아~ 가련하면서도 아름다운<br> 사슴상 여인이여~ ㅎㅎ"
                         break;
                     case "여우상":
                         resultMessage = "여우상"
-                        resultMessage2 = "오늘도 많은 남자들을 홀리시겠네요. ㅋㅋㅋ"
+                        resultMessage2 = "오늘도 특유의 끼로 많은 남자들을 홀리시겠어요. ㅋㅋㅋ"
                         break;    
                     case "강아지":
                         resultMessage = "강아지"
@@ -344,31 +344,16 @@
                     labelContainer.childNodes[i].innerHTML = classPrediction;
                 }
 
+                // matchimage = document.getElementsByClassName('match-image')
+                // matchimage.appendChild(document.createElement('div'));
+
                 setTimeout(function() {
                     var con_test = confirm("어울리는 연애인을 추천해 드릴까요?");
-
                     if(con_test == true){
-                    document.write("어울리는 멋진 연애인 서비스는 준비 중입니다.");
-                    addimage();
-
-                    // labelContainer = document.getElementById('label-container');
-                    // labelContainer.appendChild(document.createElement('div'));
-                    // var reader = new FileReader();
-                    
-                    // reader.onload = function (e) {
-                    //     $('.image-upload-wrap').hide();
-
-                    //     $('.file-upload-image').attr('src', e.target.result);
- 
-                    //     $('.file-upload-content').show();
-
-                    //     $('.image-title').html(input.files[0].name);
-                    // };
-                    // reader.readAsDataURL(input.files[0]);
-                    // }
-                    }
-                    else if(con_test == false){ return; }
-                }, 5000);
+                        document.write(prediction[0].className + " 연애인이 잘 어울리는구요.<p></p>");
+                        addimage(prediction[0].className);
+                    } else if(con_test == false){ return; }
+                }, 3000);
             }
 
             async function predict_man() {
@@ -495,11 +480,11 @@
                 }
             }
 
-            function addimage() { 
+            function addimage(a) { 
             var img = document.createElement("img");
-            img.src = "./강동원.jpg"; 
-            img.height = 100; 
-            img.width = 50;
+            img.src = "./"+a+"1.jpg"; 
+            img.height = 500; 
+            img.width = 400;
             //optionally set a css class on the image
             var class_name = "match-image";
             img.setAttribute("class", class_name);
